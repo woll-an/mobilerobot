@@ -1,4 +1,5 @@
 import numpy as np
+import utilities
 
 V = 5
 OMEGA = 5
@@ -13,12 +14,6 @@ class Vehicle:
         self.__rightSensor = np.array((1, 0))
         self.__leftSensor = np.array((-1, 0))
         self.__length = l
-
-    def getTransformationMatrix(self):
-        thetaRad = np.radians(self.__theta)
-        c, s = np.cos(thetaRad), np.sin(thetaRad)
-        T = np.array(((c, -s, self.__x), (s, c, self.__y), (0, 0, 1)))
-        return T
 
     # def moveForward(self, vl, vr):
     #     dt = 1/20
@@ -38,6 +33,13 @@ class Vehicle:
         self.__y = y
         self.__theta = theta
 
+    def setT(self, T):
+        self.__x, self.__y, self.__theta = utilities.transformationMatrixToState(
+            T)
+
+    def getT(self):
+        return utilities.stateToTransformationMatrix(self.__x, self.__y, self.__theta)
+
     def getMeasurements(self, lightVector):
         leftT, rightT = self.sensorsTransformed()
         leftMeasurement = np.linalg.norm(
@@ -48,7 +50,21 @@ class Vehicle:
 
     def getPoints(self):
         points_transformed = []
-        T = self.getTransformationMatrix()
+        T = utilities.stateToTransformationMatrix(
+            self.__x, self.__y, self.__theta)
         for p in self.__pointsV:
             points_transformed.append(np.matmul(T, p+[1])[0:2])
         return points_transformed
+
+    def moveForward(self, distance):
+        T_update = np.array(((1, 0, 0), (0, 1, distance), (0, 0, 1)))
+        self.setT(np.matmul(self.getT(), T_update))
+
+    def rotateLeft(self, angle):
+        # thetaRad = np.radians(theta)
+        # c, s = np.cos(thetaRad), np.sin(thetaRad)
+        # T_update = np.array(((1, 0, 0), (0, 1, distance), (0, 0, 1)))
+        self.__theta += angle
+
+    def rotateRight(self, angle):
+        self.__theta -= angle
