@@ -28,7 +28,7 @@ class World:
         plt.gca().set_aspect('equal', adjustable='box')
 
         for v in self.__vehicles:
-            patch = plt.Polygon(v.getPoints())
+            patch = plt.Polygon(v.getCorners())
             self.__patches.append(patch)
             ax.add_patch(patch)
 
@@ -41,15 +41,9 @@ class World:
                                            blit=True)
         plt.show()
 
-    def getPatches(self):
-        patches = []
-        for v in self.__vehicles:
-            patches.append(v.getPatch())
-        return patches
-
     def animate(self, i):
         for j, v in enumerate(self.__vehicles):
-            v.moveForward(0.1)
-            v.rotateRight(1)
-            self.__patches[j].set_xy(v.getPoints())
+            x, y, _ = v.getState()
+            v.moveWithLight(self.__light.getIntensityVector(x, y))
+            self.__patches[j].set_xy(v.getCorners())
         return []
