@@ -10,7 +10,7 @@ def stateToTransformationMatrix(x, y, theta):
 def transformationMatrixToState(T):
     x = T[0, 2]
     y = T[1, 2]
-    thetaRad = np.arccos(T[0, 0])
+    thetaRad = np.arccos(np.clip(T[0, 0], -1, 1))
     theta = np.degrees(thetaRad)
     return x, y, theta
 
