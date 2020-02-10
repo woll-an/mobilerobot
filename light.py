@@ -15,3 +15,10 @@ class Light:
         diff = np.hstack((x-self.x, y-self.y))
         mag = np.linalg.norm(diff)
         return diff/mag*self.getIntensity(x, y)
+
+    def getIntensityField(self, x, y):
+        z = np.zeros((x, y))
+        for i in range(x):
+            for j in range(y):
+                z[i][j] = self.getIntensity(i, j)
+        return np.transpose(z)

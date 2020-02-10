@@ -3,8 +3,9 @@ import utilities
 
 
 class Vehicle:
-    def __init__(self):
+    def __init__(self, radius):
         self.T = utilities.stateToTransformationMatrix(0, 0, 0)
+        self.radius = radius
         self.controller = None
 
     def setState(self, x, y, theta):
@@ -13,15 +14,13 @@ class Vehicle:
     def getState(self):
         return utilities.transformationMatrixToState(self.T)
 
-    def getCorners(self):
-        points_transformed = []
-        for p in self.__pointsV:
-            points_transformed.append(np.matmul(self.T, p+[1])[0:2])
-        return points_transformed
-
-    def moveForward(self, distance):
+    def moveForward(self, distance, free):
         T_update = utilities.stateToTransformationMatrix(0, distance, 0)
-        self.T = np.matmul(self.T, T_update)
+        T_new = np.matmul(self.T, T_update)
+        x = T_new[0, 2]
+        y = T_new[1, 2]
+        if not free or free(x, y, self.radius):
+            self.T = T_new
 
     def rotateLeft(self, angle):
         T_update = utilities.stateToTransformationMatrix(0, 0, angle)
@@ -32,14 +31,14 @@ class Vehicle:
         self.T = np.matmul(self.T, T_update)
 
     def lightMeasurement(self, light):
-        v_sensor_r = np.matmul(self.T[0:2, 0:2], np.array((1, 0)))
-        v_sensor_l = np.matmul(self.T[0:2, 0:2], np.array((-1, 0)))
+        R = self.T[0:2, 0:2]
+        v_sensor_r = np.matmul(R, np.array((1, 0)))
         angle_r = np.degrees(utilities.angle_between(light, v_sensor_r))
         intensity = np.linalg.norm(light)
         right_meas = (angle_r/180) * intensity
         left_meas = (1-angle_r/180) * intensity
         return right_meas, left_meas
 
-    def moveWithLight(self, light):
+    def moveWithLight(self, light, free=None):
         right, left = self.lightMeasurement(light)
-        return self.controller(self, right, left)
+        return self.controller(self, right, left, free)

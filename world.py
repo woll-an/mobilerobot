@@ -2,19 +2,19 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-INTERVAL = 20
+INTERVAL = 30
 FRAMES = 1000
 
 
 class VehiclePlot:
-    def __init__(self, vehicle, dimension):
+    def __init__(self, vehicle):
         self.vehicle = vehicle
+        r = self.vehicle.radius
         self.circle = plt.Circle(
-            (0, 0), radius=dimension/2, fc=None, ec='k', fill=False)
-        r = dimension/2
+            (0, 0), radius=r, fc=None, ec='#a19d97', fill=False)
         self.points = [
             [0, r], [-r*np.sqrt(2)/2, -r*np.sqrt(2)/2], [r*np.sqrt(2)/2, -r*np.sqrt(2)/2]]
-        self.triangle = plt.Polygon(self.points)
+        self.triangle = plt.Polygon(self.points, fc='#fca31c')
         self.updatePatches()
 
     def updatePatches(self):
@@ -28,19 +28,11 @@ class VehiclePlot:
 
 
 class World:
-    def __init__(self, x, y, vehicles, light=None):
+    def __init__(self, x, y, vehicles, light):
         self.__light = light
-        self.__vehicles = [VehiclePlot(v, 5) for v in vehicles]
+        self.__vehicles = [VehiclePlot(v) for v in vehicles]
         self.__width = x
         self.__height = y
-
-    def getLightIntensity(self):
-        z = np.zeros((self.__height, self.__width))
-        if self.__light:
-            for i in range(self.__height):
-                for j in range(self.__width):
-                    z[i][j] = self.__light.getIntensity(j, i)
-        return z
 
     def showScene(self, animate=False):
         fig = plt.figure()
@@ -51,8 +43,10 @@ class World:
             ax.add_patch(v.circle)
             ax.add_patch(v.triangle)
 
-        im = ax.pcolormesh(self.getLightIntensity())
+        im = ax.pcolormesh(self.__light.getIntensityField(
+            self.__width, self.__height))
         fig.colorbar(im, ax=ax)
+
         if animate:
             anim = animation.FuncAnimation(fig, self.animate,
                                            frames=FRAMES,
@@ -63,6 +57,10 @@ class World:
     def animate(self, i):
         for j, v in enumerate(self.__vehicles):
             x, y, _ = v.vehicle.getState()
-            v.vehicle.moveWithLight(self.__light.getIntensityVector(x, y))
+            v.vehicle.moveWithLight(
+                self.__light.getIntensityVector(x, y), self.free)
             v.updatePatches()
         return []
+
+    def free(self, x, y, r):
+        return (x - r) >= 0 and (y - r) >= 0 and (x + r) <= self.__width and (y + r) <= self.__height
