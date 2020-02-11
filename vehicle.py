@@ -21,6 +21,9 @@ class Vehicle:
         y = T_new[1, 2]
         if not free or free(x, y, self.radius):
             self.T = T_new
+            return True
+        else:
+            return False
 
     def rotateLeft(self, angle):
         T_update = utilities.stateToTransformationMatrix(0, 0, angle)

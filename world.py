@@ -2,8 +2,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-INTERVAL = 30
-FRAMES = 1000
+INTERVAL = 10
 
 
 class VehiclePlot:
@@ -28,9 +27,10 @@ class VehiclePlot:
 
 
 class World:
-    def __init__(self, x, y, vehicles, light):
+    def __init__(self, x, y, vehicles, light, obstacles):
         self.__light = light
         self.__vehicles = [VehiclePlot(v) for v in vehicles]
+        self.__obstacles = obstacles
         self.__width = x
         self.__height = y
 
@@ -43,24 +43,30 @@ class World:
             ax.add_patch(v.circle)
             ax.add_patch(v.triangle)
 
+        for o in self.__obstacles:
+            ax.add_patch(o.patch)
+
         im = ax.pcolormesh(self.__light.getIntensityField(
             self.__width, self.__height))
         fig.colorbar(im, ax=ax)
 
         if animate:
-            anim = animation.FuncAnimation(fig, self.animate,
-                                           frames=FRAMES,
-                                           interval=INTERVAL,
+            anim = animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
                                            blit=True)
         plt.show()
 
     def animate(self, i):
         for j, v in enumerate(self.__vehicles):
-            x, y, _ = v.vehicle.getState()
-            v.vehicle.moveWithLight(
-                self.__light.getIntensityVector(x, y), self.free)
+            for i in range(10):
+                x, y, _ = v.vehicle.getState()
+                v.vehicle.moveWithLight(
+                    self.__light.getIntensityVector(x, y), self.free)
             v.updatePatches()
         return []
 
     def free(self, x, y, r):
-        return (x - r) >= 0 and (y - r) >= 0 and (x + r) <= self.__width and (y + r) <= self.__height
+        result = (x - r) >= 0 and (y - r) >= 0 and (x +
+                                                    r) <= self.__width and (y + r) <= self.__height
+        for o in self.__obstacles:
+            result &= o.isOutside(x, y, r)
+        return result
