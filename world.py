@@ -39,6 +39,7 @@ class World:
         ax = plt.axes(xlim=(0, self.width), ylim=(
             0, self.height), xlabel='x', ylabel='y')
         plt.gca().set_aspect('equal', adjustable='box')
+        anim
 
         for v in self.vehicles:
             ax.add_patch(v.circle)
@@ -52,9 +53,10 @@ class World:
                 self.width, self.height))
 
         if animate:
-            animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
-                                    blit=True)
+            anim = animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
+                                           blit=True)
         plt.show()
+        return anim
 
     def animate(self, i):
         for j, v in enumerate(self.vehicles):
