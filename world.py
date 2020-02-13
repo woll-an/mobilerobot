@@ -36,7 +36,8 @@ class World:
 
     def showScene(self, animate=False):
         fig = plt.figure()
-        ax = plt.axes(xlim=(0, self.__width), ylim=(0, self.__height))
+        ax = plt.axes(xlim=(0, self.__width), ylim=(
+            0, self.__height), xlabel='x', ylabel='y')
         plt.gca().set_aspect('equal', adjustable='box')
 
         for v in self.__vehicles:
@@ -48,7 +49,6 @@ class World:
 
         im = ax.pcolormesh(self.__light.getIntensityField(
             self.__width, self.__height))
-        fig.colorbar(im, ax=ax)
 
         if animate:
             anim = animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
