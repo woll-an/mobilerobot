@@ -27,7 +27,7 @@ class VehiclePlot:
 
 
 class World:
-    def __init__(self, x, y, vehicles, light, obstacles):
+    def __init__(self, x, y, vehicles=[], light=None, obstacles=[]):
         self.__light = light
         self.__vehicles = [VehiclePlot(v) for v in vehicles]
         self.__obstacles = obstacles
@@ -47,8 +47,9 @@ class World:
         for o in self.__obstacles:
             ax.add_patch(o.patch)
 
-        im = ax.pcolormesh(self.__light.getIntensityField(
-            self.__width, self.__height))
+        if self.__light:
+            im = ax.pcolormesh(self.__light.getIntensityField(
+                self.__width, self.__height))
 
         if animate:
             anim = animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
@@ -59,8 +60,9 @@ class World:
         for j, v in enumerate(self.__vehicles):
             for i in range(10):
                 x, y, _ = v.vehicle.getState()
-                v.vehicle.moveWithLight(
-                    self.__light.getIntensityVector(x, y), self.free)
+                if self.__light:
+                    v.vehicle.moveWithLight(
+                        self.__light.getIntensityVector(x, y), self.free)
             v.updatePatches()
         return []
 
