@@ -7,6 +7,7 @@ class Vehicle:
         self.T = utilities.stateToTransformationMatrix(0, 0, 0)
         self.radius = radius
         self.controller = None
+        self.collisionFree = None
 
     def setState(self, x, y, theta):
         self.T = utilities.stateToTransformationMatrix(x, y, theta)
@@ -14,12 +15,12 @@ class Vehicle:
     def getState(self):
         return utilities.transformationMatrixToState(self.T)
 
-    def moveForward(self, distance, free=None):
+    def moveForward(self, distance):
         T_update = utilities.stateToTransformationMatrix(0, distance, 0)
         T_new = np.matmul(self.T, T_update)
         x = T_new[0, 2]
         y = T_new[1, 2]
-        if not free or free(x, y, self.radius):
+        if self.collisionFree(x, y, self.radius):
             self.T = T_new
             return True
         else:
@@ -42,9 +43,9 @@ class Vehicle:
         left_meas = (1-angle_r/180) * intensity
         return right_meas, left_meas
 
-    def moveWithLight(self, light, free=None):
+    def moveWithLight(self, light):
         right, left = self.lightMeasurement(light)
-        return self.controller(self, right, left, free)
+        return self.controller(self, right, left)
 
     def moveBlindly(self):
         self.controller(self)
