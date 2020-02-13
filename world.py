@@ -28,47 +28,59 @@ class VehiclePlot:
 
 class World:
     def __init__(self, x, y, vehicles=[], light=None, obstacles=[]):
-        self.__light = light
-        self.__vehicles = [VehiclePlot(v) for v in vehicles]
-        self.__obstacles = obstacles
-        self.__width = x
-        self.__height = y
+        self.light = light
+        self.vehicles = [VehiclePlot(v) for v in vehicles]
+        self.obstacles = obstacles
+        self.width = x
+        self.height = y
 
     def showScene(self, animate=False):
         fig = plt.figure()
-        ax = plt.axes(xlim=(0, self.__width), ylim=(
-            0, self.__height), xlabel='x', ylabel='y')
+        ax = plt.axes(xlim=(0, self.width), ylim=(
+            0, self.height), xlabel='x', ylabel='y')
         plt.gca().set_aspect('equal', adjustable='box')
 
-        for v in self.__vehicles:
+        for v in self.vehicles:
             ax.add_patch(v.circle)
             ax.add_patch(v.triangle)
 
-        for o in self.__obstacles:
+        for o in self.obstacles:
             ax.add_patch(o.patch)
 
-        if self.__light:
-            im = ax.pcolormesh(self.__light.getIntensityField(
-                self.__width, self.__height))
+        if self.light:
+            im = ax.pcolormesh(self.light.getIntensityField(
+                self.width, self.height))
 
         if animate:
-            anim = animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
-                                           blit=True)
+            animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
+                                    blit=True)
         plt.show()
 
     def animate(self, i):
-        for j, v in enumerate(self.__vehicles):
+        for j, v in enumerate(self.vehicles):
             for i in range(10):
                 x, y, _ = v.vehicle.getState()
-                if self.__light:
+                if self.light:
                     v.vehicle.moveWithLight(
-                        self.__light.getIntensityVector(x, y), self.free)
+                        self.light.getIntensityVector(x, y), self.free)
             v.updatePatches()
         return []
 
     def free(self, x, y, r):
         result = (x - r) >= 0 and (y - r) >= 0 and (x +
-                                                    r) <= self.__width and (y + r) <= self.__height
-        for o in self.__obstacles:
+                                                    r) <= self.width and (y + r) <= self.height
+        for o in self.obstacles:
             result &= o.isOutside(x, y, r)
         return result
+
+
+class SimpleWorld(World):
+    def __init__(self, x, y, vehicles=[]):
+        super().__init__(x, y, vehicles)
+
+    def animate(self, i):
+        for j, v in enumerate(self.vehicles):
+            for i in range(10):
+                v.vehicle.moveBlindly()
+            v.updatePatches()
+        return []

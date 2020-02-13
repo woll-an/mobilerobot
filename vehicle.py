@@ -14,7 +14,7 @@ class Vehicle:
     def getState(self):
         return utilities.transformationMatrixToState(self.T)
 
-    def moveForward(self, distance, free):
+    def moveForward(self, distance, free=None):
         T_update = utilities.stateToTransformationMatrix(0, distance, 0)
         T_new = np.matmul(self.T, T_update)
         x = T_new[0, 2]
@@ -45,3 +45,6 @@ class Vehicle:
     def moveWithLight(self, light, free=None):
         right, left = self.lightMeasurement(light)
         return self.controller(self, right, left, free)
+
+    def moveBlindly(self):
+        self.controller(self)
