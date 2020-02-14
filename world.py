@@ -42,11 +42,11 @@ class SimpleWorld:
             self.ax.add_patch(v.circle)
             self.ax.add_patch(v.triangle)
 
-    def showScene(self, animate=False):
-        if animate:
-            anim = animation.FuncAnimation(
-                self.fig, self.animate, interval=INTERVAL, blit=True)
+    def initAnimation(self):
+        return animation.FuncAnimation(
+            self.fig, self.animate, interval=INTERVAL, blit=True)
 
+    def showScene(self):
         plt.show()
 
     def freeSpace(self, x, y, r):

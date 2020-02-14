@@ -38,4 +38,5 @@ v2.controller = hate
 
 lworld = LightObstacleWorld(x=100, y=100, vehicles=[
                             v1, v2], light=l, obstacles=[o1, o2])
-lworld.showScene(animate=True)
+lworld.initAnimation()
+lworld.showScene()

@@ -33,4 +33,5 @@ v1.controller = love
 v2.controller = hate
 
 world = LightWorld(x=100, y=100, vehicles=[v1, v2], light=l)
-world.showScene(animate=True)
+world.initAnimation()
+world.showScene()

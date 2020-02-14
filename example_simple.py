@@ -13,4 +13,5 @@ def move(vehicle):
 v1.controller = move
 
 sworld = SimpleWorld(x=100, y=100, vehicles=[v1])
-sworld.showScene(animate=True)
+sworld.initAnimation()
+sworld.showScene()
