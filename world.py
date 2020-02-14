@@ -2,7 +2,8 @@ import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import animation
 
-INTERVAL = 10
+INTERVAL = 30
+COMPUTATIONS = 50
 
 
 class VehiclePlot:
@@ -55,7 +56,7 @@ class SimpleWorld:
 
     def animate(self, i):
         for j, v in enumerate(self.vehicles):
-            for i in range(10):
+            for i in range(COMPUTATIONS):
                 v.vehicle.moveBlindly()
             v.updatePatches()
         return []
@@ -71,7 +72,7 @@ class LightWorld(SimpleWorld):
 
     def animate(self, i):
         for j, v in enumerate(self.vehicles):
-            for i in range(10):
+            for i in range(COMPUTATIONS):
                 x, y, _ = v.vehicle.getState()
                 if self.light:
                     v.vehicle.moveWithLight(
