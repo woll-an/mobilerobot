@@ -42,7 +42,7 @@ class SimpleWorld:
             self.ax.add_patch(v.circle)
             self.ax.add_patch(v.triangle)
 
-    def initAnimation(self, frames):
+    def initAnimation(self, frames=100):
         return animation.FuncAnimation(
             self.fig, self.animate, interval=INTERVAL, frames=frames, blit=True)
 
