@@ -48,13 +48,10 @@ class SimpleWorld:
         self.initScene(ax)
 
         if animate:
-            anim = animation.FuncAnimation(fig, self.animate, interval=INTERVAL,
-                                           blit=True)
+            anim = animation.FuncAnimation(
+                fig, self.animate, interval=INTERVAL, blit=True)
 
         plt.show()
-
-        if animate:
-            return anim
 
     def freeSpace(self, x, y, r):
         return (x - r) >= 0 and (y - r) >= 0 and (x +
