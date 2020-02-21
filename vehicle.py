@@ -3,7 +3,7 @@ import utilities
 
 
 class Vehicle:
-    def __init__(self, radius):
+    def __init__(self, radius=3):
         self.T = utilities.stateToTransformationMatrix(0, 0, 0)
         self.radius = radius
         self.controller = None

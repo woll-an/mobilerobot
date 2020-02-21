@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from matplotlib import animation
 
 INTERVAL = 30
-COMPUTATIONS = 50
+COMPUTATIONS = 30
 
 
 class VehiclePlot:
