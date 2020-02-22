@@ -2,7 +2,7 @@ import numpy as np
 import utilities
 
 
-class Vehicle:
+class Robot:
     def __init__(self, radius=3):
         self.T = utilities.stateToTransformationMatrix(0, 0, 0)
         self.radius = radius

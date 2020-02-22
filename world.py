@@ -6,10 +6,10 @@ INTERVAL = 30
 COMPUTATIONS = 30
 
 
-class VehiclePlot:
-    def __init__(self, vehicle):
-        self.vehicle = vehicle
-        r = self.vehicle.radius
+class RobotPlot:
+    def __init__(self, robot):
+        self.robot = robot
+        r = self.robot.radius
         self.circle = plt.Circle(
             (0, 0), radius=r, fc=None, ec='#a19d97', fill=False)
         self.points = [
@@ -19,7 +19,7 @@ class VehiclePlot:
 
     def updatePatches(self):
         points_transformed = []
-        T = self.vehicle.T
+        T = self.robot.T
         for p in self.points:
             p_aug = p+[1]
             points_transformed.append(np.matmul(T, p_aug)[0:2])
@@ -28,18 +28,18 @@ class VehiclePlot:
 
 
 class SimpleWorld:
-    def __init__(self, x, y, vehicles=[]):
+    def __init__(self, x, y, robots=[]):
         self.width = x
         self.height = y
-        self.vehicles = [VehiclePlot(v) for v in vehicles]
-        for v in self.vehicles:
-            v.vehicle.collisionFree = self.freeSpace
+        self.robots = [RobotPlot(v) for v in robots]
+        for v in self.robots:
+            v.robot.collisionFree = self.freeSpace
 
         self.fig = plt.figure()
         self.ax = plt.axes(xlim=(0, self.width), ylim=(
             0, self.height), xlabel='x', ylabel='y')
         plt.gca().set_aspect('equal', adjustable='box')
-        for v in self.vehicles:
+        for v in self.robots:
             self.ax.add_patch(v.circle)
             self.ax.add_patch(v.triangle)
 
@@ -55,35 +55,35 @@ class SimpleWorld:
                                                   r) <= self.width and (y + r) <= self.height
 
     def animate(self, i):
-        for j, v in enumerate(self.vehicles):
+        for j, v in enumerate(self.robots):
             for i in range(COMPUTATIONS):
-                v.vehicle.moveBlindly()
+                v.robot.moveBlindly()
             v.updatePatches()
         return []
 
 
 class LightWorld(SimpleWorld):
-    def __init__(self, x, y, vehicles=[], light=None):
-        super().__init__(x, y, vehicles)
+    def __init__(self, x, y, robots=[], light=None):
+        super().__init__(x, y, robots)
         self.light = light
         if self.light:
             self.ax.pcolormesh(self.light.getIntensityField(
                 self.width, self.height))
 
     def animate(self, i):
-        for j, v in enumerate(self.vehicles):
+        for j, v in enumerate(self.robots):
             for i in range(COMPUTATIONS):
-                x, y, _ = v.vehicle.getState()
+                x, y, _ = v.robot.getState()
                 if self.light:
-                    v.vehicle.moveWithLight(
+                    v.robot.moveWithLight(
                         self.light.getIntensityVector(x, y))
             v.updatePatches()
         return []
 
 
 class LightObstacleWorld(LightWorld):
-    def __init__(self, x, y, vehicles=[], light=None, obstacles=[]):
-        super().__init__(x, y, vehicles, light)
+    def __init__(self, x, y, robots=[], light=None, obstacles=[]):
+        super().__init__(x, y, robots, light)
         self.obstacles = obstacles
         for o in self.obstacles:
             self.ax.add_patch(o.patch)
