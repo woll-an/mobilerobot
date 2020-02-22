@@ -11,7 +11,7 @@ class RobotPlot:
         self.robot = robot
         r = self.robot.radius
         self.circle = plt.Circle(
-            (0, 0), radius=r, fc=None, ec='#a19d97', fill=False)
+            (0, 0), radius=r, fc=None, ec='#fca31c', fill=False)
         self.points = [
             [0, r], [-r*np.sqrt(2)/2, -r*np.sqrt(2)/2], [r*np.sqrt(2)/2, -r*np.sqrt(2)/2]]
         self.triangle = plt.Polygon(self.points, fc='#fca31c')
