@@ -16,7 +16,11 @@ def transformationMatrixToState(T):
 
 
 def unit_vector(vector):
-    return vector / np.linalg.norm(vector)
+    norm = np.linalg.norm(vector)
+    if norm == 0.0:
+        return vector
+    else:
+        return vector / np.linalg.norm(vector)
 
 
 def angle_between(v1, v2):

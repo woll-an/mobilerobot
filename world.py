@@ -73,10 +73,8 @@ class LightWorld(SimpleWorld):
     def animate(self, i):
         for j, v in enumerate(self.robots):
             for i in range(COMPUTATIONS):
-                x, y, _ = v.robot.getState()
                 if self.light:
-                    v.robot.moveWithLight(
-                        self.light.getIntensityVector(x, y))
+                    v.robot.moveWithLight(self.light)
             v.updatePatches()
         return []
 

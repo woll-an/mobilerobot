@@ -35,10 +35,12 @@ class Robot:
         self.T = np.matmul(self.T, T_update)
 
     def lightMeasurement(self, light):
+        x, y, _ = self.getState()
+        lightVector = light.getIntensityVector(x, y)
         R = self.T[0:2, 0:2]
         v_sensor_r = np.matmul(R, np.array((1, 0)))
-        angle_r = np.degrees(utilities.angle_between(light, v_sensor_r))
-        intensity = np.linalg.norm(light)
+        angle_r = np.degrees(utilities.angle_between(lightVector, v_sensor_r))
+        intensity = np.linalg.norm(lightVector)
         right_meas = (angle_r/180) * intensity
         left_meas = (1-angle_r/180) * intensity
         return right_meas, left_meas
