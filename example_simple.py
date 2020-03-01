@@ -1,5 +1,5 @@
 from robot import Robot
-from world import SimpleWorld
+from world import RobotWorld
 
 
 v1 = Robot(radius=3)
@@ -12,6 +12,6 @@ def move(robot):
 
 v1.controller = move
 
-sworld = SimpleWorld(x=100, y=100, robots=[v1])
+sworld = RobotWorld(x=100, y=100, robots=[v1])
 sworld.initAnimation()
 sworld.showScene()

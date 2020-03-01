@@ -24,4 +24,4 @@ class Light:
         for i in range(x):
             for j in range(y):
                 z[i][j] = self.getIntensity(i, j)
-        return np.transpose(z)
+        return z
