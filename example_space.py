@@ -17,19 +17,16 @@ world = SpaceWorld(width, height, obstacles=[o1,o2,o3])
 field = np.zeros((width,height))
 for i in range(width):
   for j in range(height):
-    if (i, j) == start:
-      field[i, j] = Space.START.value
-    elif (i, j) == goal:
-      field[i, j] = Space.GOAL.value
-    elif world.freeSpace(i,j,3):
+    if world.freeSpace(i,j,3):
       field[i, j] = Space.FREE.value
 
 exploring = [start]
+field[start] = Space.EXPLORED.value
 parents = [[None for i in range(width)] for j in range(height)]
 count = 0
 
 def exploreCell(x, y, parent):
-  if field[x][y] == Space.FREE.value or field[x][y] == Space.GOAL.value:
+  if field[x][y] == Space.FREE.value:
     field[x][y] = Space.EXPLORED.value
     exploring.append((x,y))
     parents[x][y] = parent
@@ -38,7 +35,7 @@ def getParent(p):
   (x,y) = p
   return parents[x][y]
 
-while len(exploring) > 0 and count < 1300:
+while len(exploring) > 0 and count < 2000:
   (x, y) = exploring.pop(0)
   if (x,y) == goal:
     break
@@ -48,13 +45,14 @@ while len(exploring) > 0 and count < 1300:
   exploreCell(x, y-1, (x,y))
   count += 1
 
-field[x][y] = Space.GOAL.value
-
 current = goal
 while current is not None:
   (x, y) = current
   field[x][y] = Space.PATH.value
   current = getParent(current)
+
+field[start] = Space.START.value
+field[goal] = Space.GOAL.value
 
 world.setBackground(field)
 world.showScene()
